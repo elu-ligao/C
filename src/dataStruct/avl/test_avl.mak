@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS += -Wall -std=gnu99
-LDFLAGS += -ltrace -ldl -lavl
+LDFLAGS += -ltrace -ldl -lavl -linit
 
 LDDIR += -L /mnt/e/lg/vscode/lib
 TAGNAME = test_avl
@@ -25,4 +25,4 @@ clean:
 	rm -f $(OBJS) 
 
 %.o:%.c
-	$(CC) $(CFLAGS) $(INC) $(LDDIR) -o $@ -c $< $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INC) $(LDDIR) -o $@ -c $< 

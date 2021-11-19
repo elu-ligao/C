@@ -11,10 +11,7 @@
 
 void initLog()
 {
-    printf("start InitTraceFunc\n");
     InitTraceFunc("test");
-    
-    printf("start GetTraceFileFunc\n");
     GetTraceFileFunc(NULL);
 }
 
@@ -23,6 +20,20 @@ void initLog()
 
 int main(int argc, char *argv[])
 {
+    if(argc == 3)
+    {
+        srand(atoi(argv[2]));
+    }
+    else if(argc == 2)
+    {
+        srand(time(NULL));
+    }
+    else
+    {
+        printf("Usage %s num [seed]\n", argv[0]);
+        exit(-1);
+    }
+
     int rc = 0;
     rc = initTraceDynamicHandle();
     if(rc)
@@ -32,17 +43,13 @@ int main(int argc, char *argv[])
     }
     
     initLog();
-    printf("initLog success..\n");
     rc = initBstHandle();
     if(rc)
     {
         fprintf( stderr, "[%s](%d) initBstHandle get error: rc = %d\n", __FILE__, __LINE__, rc);
         return rc;
     }
-
-    srand(time(NULL));
-    // srand(100);
-
+    
     int i;
     int numElem = atoi(argv[1]);
     pbstElement elist = (pbstElement)calloc(numElem, sizeof(bstElement));
@@ -59,7 +66,7 @@ int main(int argc, char *argv[])
     free(elist);
     elist = NULL;
 
-    drawBsTreeFunc(root, 12);
+    drawBsTreeFunc(root, 2);
     
     LogInfoHex((unsigned char *)root->data, sizeof(bstElement), "root->data");
     pbstElement find = (pbstElement)calloc(1, sizeof(bstElement));
@@ -103,11 +110,11 @@ int main(int argc, char *argv[])
         printf("delete %d success\n", find->key);
         LogDebugHex((unsigned char *)root, sizeof(bstNode)*numElem-1, "root");
         
-        drawBsTreeFunc(root, 12);
+        drawBsTreeFunc(root, 2);
     }
     else
     {
-        printf("Tobe delete element %d is not found\n", find->key);
+        printf("To be deleted element %d is not found\n", find->key);
     }
 
     freeBst(&root);

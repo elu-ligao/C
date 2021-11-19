@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 #include <time.h>
-#include "trace.h"
+#include "trace_dynamic.h"
 #include "avl_dynamic.h"
 
 
 
 void initLog()
 {
-    InitTrace("test");
-    GetTraceFile(NULL);
+    InitTraceFunc("test");
+    GetTraceFileFunc(NULL);
 }
 
 
@@ -20,7 +20,27 @@ void initLog()
 
 int main(int argc, char *argv[])
 {
+    if(argc == 3)
+    {
+        srand(atoi(argv[2]));
+    }
+    else if(argc == 2)
+    {
+        srand(time(NULL));
+    }
+    else
+    {
+        printf("Usage %s num [seed]\n", argv[0]);
+        exit(-1);
+    }
+
     int rc = 0;
+    rc = initTraceDynamicHandle();
+    if(rc)
+    {
+        fprintf( stderr, "[%s](%d) initTraceDynamicHandle get error: rc = %d\n", __FILE__, __LINE__, rc);
+        return rc;
+    }
     initLog();
 
     rc = initAvlHandle();
@@ -29,9 +49,6 @@ int main(int argc, char *argv[])
         fprintf( stderr, "[%s](%d) initAvlHandle get error: rc = %d\n", __FILE__, __LINE__, rc);
         return rc;
     }
-
-    srand(time(NULL));
-    // srand(100);
 
     int i;
     int numElem = atoi(argv[1]);

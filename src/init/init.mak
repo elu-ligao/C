@@ -18,8 +18,7 @@ sources = \
 
 
 $(TARGET) : $(OBJS)
-	gcc -shared -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBS) $^ $(LDDIR) $(LDFLAGS)
-#	gcc -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBS) $^
+	gcc -shared -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBS) $^
 
 
 include $(sources:.c=.d)
