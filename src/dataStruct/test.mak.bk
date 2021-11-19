@@ -1,0 +1,36 @@
+HEADIR = ../../inc
+TAGDIR = ../../bin
+
+TAGNAME = test
+TARGET = $(TAGDIR)/$(TAGNAME)
+
+CPPFLAGS = -I $(HEADIR)
+CFLAGS = -fPIC -std=gnu99
+
+LIBPATH  = -L ../../lib
+LIBVAR   = -ltrace
+
+OBJS = \
+		test.o 
+
+sources = \
+		test.c 
+
+
+$(TARGET) : $(OBJS)
+	gcc -o $@ $(LIBPATH) $^ $(LIBVAR) 
+
+
+include $(sources:.c=.d)
+
+%.d : %.c
+	set -e; rm -f $@; \
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(LIBPATH) $< $(LIBVAR) > $@.$$$$; \
+	sed 's, \($*\)\.o[ :]*, \1.o $@ : , g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+.PHONY : clean cleanall
+clean :
+	rm -f $(OBJS) *.d.* *.d
+cleanall:
+	rm -f $(OBJS) $(TARGET) *.d.* *.d

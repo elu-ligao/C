@@ -1,0 +1,47 @@
+    TYPE_BCD_DC,      /* 消息类型 */
+    TYPE_BCD_2,       /*  2域     主账号              */
+    TYPE_BCD_DC,      /*  3域     交易处理码          */
+    TYPE_BCD_DC,      /*  4域     交易金额            */
+    TYPE_BCD_DC,      /*  7域     传输日期和时间      */           
+    TYPE_BCD_DC,      /*  11域    受卡方系统跟踪号    */
+    TYPE_BCD_DC,      /*  12域    本地交易时间        */
+    TYPE_BCD_DC,      /*  13域    本地交易日期        */
+    TYPE_BCD_DC,      /*  14域    卡有效期            */
+    TYPE_BCD_DC,      /*  15域    清算效期            */
+    TYPE_BCD_DC,      /*  22域    服务点输入方式码    */
+    TYPE_BCD_DC,      /*  23域    卡序列号            */
+    TYPE_BCD_DC,      /*  26域    服务点PIN获取码     */
+    TYPE_BCD_2,       /*  32域    受理机构标识码      */
+    TYPE_BCD_2,       /*  33域    发送机构标识码      */
+    TYPE_BCD_2,       /*  35域    2磁道数据           */
+    TYPE_BCD_3,       /*  36域    3磁道数据           */
+    TYPE_ASC_DC,      /*  37域    系统检索参考号      */
+    TYPE_ASC_DC,      /*  38域    授权码              */
+    TYPE_ASC_DC,      /*  39域    应答码              */
+    TYPE_BCD_2,       /*  40域    应答码中文解释      */
+    TYPE_ASC_DC,      /*  41域    受卡机终端标识码    */
+    TYPE_ASC_DC,      /*  42域    受卡方标识码        */
+    TYPE_ASC_DC,      /*  43域    受卡方名称地址      */
+    TYPE_ASC_3,       /*  48域    附加数据-私有       */
+    TYPE_ASC_2,       /*  */
+    TYPE_ASC_3,
+    TYPE_ASC_DC,      /*  49域    交易货币代码        */
+    TYPE_BCD_DC,      /*  52域    个人标识码数据      */
+    TYPE_BCD_DC,      /*  53域    安全控制信息        */
+    TYPE_ASC_3,       /*  54域    实际金额            */
+    TYPE_ASC_3,       /*  55域    IC卡数据域          */
+    TYPE_ASC_3,
+    TYPE_ASC_3,
+    TYPE_BCD_3,
+    TYPE_ASC_3,       /*  60域    自定义域            */
+    TYPE_ASC_3,       /*  61域    持卡人身份认证信息  */
+    TYPE_ASC_3,
+    TYPE_ASC_3,
+    TYPE_ASC_DC,
+    TYPE_BCD_DC,      /*  66域    清算代码            */
+    TYPE_BCD_DC,      /*  70域    网络管理信息码      */
+    TYPE_BCD_DC,      /*  90域    原始数据元          */
+    TYPE_ASC_2,       /*  100域   接收机构标识码      */
+    TYPE_ASC_2,       /*  102域   账户标识1           */
+    TYPE_ASC_2,       /*  103域   账户标识2           */
+    TYPE_ASC_DC,      /*  128域   报文鉴别码          */
