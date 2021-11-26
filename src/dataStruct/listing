@@ -3,4 +3,9 @@ avl             Adelson-Velskii Landis提出的AVL树 平衡二叉树
 linkList        链表操作
   |--mergeList  链表合并
   |--polynamial 多项式操作
-    
+stackQueue      栈和队列
+  |--stackSequence  顺序栈
+  |--stackLink      链栈
+  |--queueSequence  顺序队列
+  |--queueLink      链队
+  

@@ -1,24 +1,23 @@
-HEADIR = /mnt/e/lg/vscode/inc
+HEADIR = ./inc
 TAGDIR = /mnt/e/lg/vscode/lib
-TAGNAME = libinit.so
+TAGNAME = libstackSequence.so
 TARGET = $(TAGDIR)/$(TAGNAME)
 
 CPPFLAGS = -I$(HEADIR)
 CFLAGS = -fPIC -std=gnu99
 
-LDFLAGS += -ltrace -ldl
-LDDIR += -L /mnt/e/lg/vscode/lib
 
 OBJS = \
-	init_trace.o \
+	stackSequence.o \
 
 
 sources = \
-	init_trace.c \
+	stackSequence.c \
 
 
 $(TARGET) : $(OBJS)
 	gcc -shared -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBS) $^
+#	gcc -o $@ $(CFLAGS) $(CPPFLAGS) $(LIBS) $^
 
 
 include $(sources:.c=.d)
