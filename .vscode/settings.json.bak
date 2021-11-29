@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "trace.h": "c",
+        "timeb.h": "c",
+        "features.h": "c",
+        "bst_dynamic.h": "c",
+        "trace_dynamic.h": "c",
+        "cmath": "c",
+        "limits": "cpp",
+        "type_traits": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "sstream": "c",
+        "stacksequence_dynamic.h": "c",
+        "testsqstack.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
