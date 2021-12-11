@@ -90,7 +90,10 @@
    
   "files.autoGuessEncoding": true,
   "files.associations": {
-    "stacksequence_dynamic.h": "c"
+    "stacksequence_dynamic.h": "c",
+    "random": "c",
+    "sstream": "c"
   },
+  "C_Cpp.errorSquiggles": "Enabled",
  
    }

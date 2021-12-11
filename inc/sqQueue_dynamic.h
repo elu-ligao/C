@@ -1,16 +1,8 @@
-/*
- * @Author       : elu
- * @Date         : 2021-11-29 15:21:45
- * @LastEditTime : 2021-11-29 23:02:33
- * @LastEditors  : Please set LastEditors
- * @Description  : 
- */
 #ifndef _STACK_SEQUENCE_DYNAMIC_H
 #define _STACK_SEQUENCE_DYNAMIC_H
 
 #include "sqQueue.h"
 
-#define MAX_QUEUE_SIZE   20
 #define SQ_QUEUE_DLL_PATH     "/mnt/e/lg/vscode/lib/libsqQueue.so"
 
 

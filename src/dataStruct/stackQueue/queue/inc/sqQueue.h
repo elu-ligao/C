@@ -1,16 +1,10 @@
-/*
- * @Author       : elu
- * @Date         : 2021-11-29 08:36:03
- * @LastEditTime : 2021-11-29 23:02:05
- * @LastEditors  : Please set LastEditors
- * @Description  : 
- */
 #ifndef _SQ_QUEUE_H
 #define _SQ_QUEUE_H
 
 #include <stdbool.h>
 
 
+#define MAX_QUEUE_SIZE   20
 typedef struct ElemType
 {
     char name[22];
