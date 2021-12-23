@@ -92,7 +92,13 @@
   "files.associations": {
     "stacksequence_dynamic.h": "c",
     "random": "c",
-    "sstream": "c"
+    "sstream": "c",
+    "sqqueue.h": "c",
+    "linkqueue.h": "c",
+    "typeinfo": "c",
+    "algheap.h": "c",
+    "stdbool.h": "c",
+    "graphqueue.h": "c"
   },
   "C_Cpp.errorSquiggles": "Enabled",
  

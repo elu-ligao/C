@@ -1,7 +1,7 @@
 /*
  * @Author       : elu
  * @Date         : 2021-12-10 17:04:16
- * @LastEditTime : 2021-12-11 19:20:24
+ * @LastEditTime : 2021-12-20 09:48:06
  * @LastEditors  : Please set LastEditors
  * @Description  : 
  */
@@ -16,8 +16,10 @@
  *      结点权重    路径长度    父节点  左孩子结点 右孩子结点     
  */
 
+
 typedef struct HTNode
 {
+    int character;
     int weight;
     int pathlen;
     int parent, lchild, rchild;

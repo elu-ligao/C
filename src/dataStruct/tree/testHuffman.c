@@ -117,56 +117,7 @@ int *getWeights(char *datas, int *n)
     return weights;
 }
 
-void codeFile(pHuffmanTree HT, pHuffmanCode HC)
-{
-    char *file = "./stdio.log";
-    char *codefile = "stdio.code.bcd";
-    FILE *fp = fopen(file, "r");
-    if(!fp) return;
-    FILE *fpcode = fopen(codefile, "w");
-    if(!fpcode) return;
-    char line[1024] = {0};
-    // unsigned char codeLine[4096] = {0};
-    char codeLine[4096] = {0};
-    int i = 0, n = 0;
-    int idx = 0, start = 0;
-    char *hexstr ;
-    unsigned char *bcd;
-    while(fgets(line, 1024, fp))
-    {
-        memset(codeLine, 0, sizeof(codeLine));
-        // printf("[%s]", line);
-        // start = 2;
-        start = 0;
-        n = strlen(line);
-        for(i=0; i<n; ++i)
-        {
-            idx = line[i];
-            strcpy((char *)codeLine+start, HC[idx]);
-            start += strlen(HC[idx]);
-        }
-        // printf("start = %d\n", start);
-        // start -= 2;
-        // codeLine[0] = start >> 8;
-        // codeLine[1] = start & 0xFF;
-        // printf("codeLine[0] = %d, codeLine[1] = %d\n", codeLine[0], codeLine[1]);
-        // fwrite(codeLine, 1, start+2, fpcode);
 
-        // printf("codeLine = %s\n", codeLine);
-        hexstr = bin2hexstr(codeLine);
-        // printf("bin2hexstr success..hexstr = %s\n", hexstr);
-        bcd = hexstr2bcd(hexstr);
-        // printf("hexstr2bcd success..\n");  
-        n = bcd[0]<<4;
-        n += bcd[1];
-        fwrite(bcd, 1, n+2, fpcode);
-        memset(line, 0, sizeof(line));
-        free(hexstr);   hexstr = NULL;
-        free(bcd);  bcd = NULL;
-    }
-    fclose(fp);
-    fclose(fpcode);
-}
 
 int metchHC(pHuffmanCode HC, char *line)
 {
@@ -174,129 +125,220 @@ int metchHC(pHuffmanCode HC, char *line)
     int i = 0;
     for(i=1; i<=n; ++i)
     {
+        // printf("line = %s, HC[%d] = %s\n", line, i, HC[i]);
         if(strstr(line, HC[i]) == line)
             return i;
     }
     return -1;
 }
 
+void cnvtbit(char *in, unsigned char *out, size_t len)
+{
+    int i,j;
+    int k;
+	for(i=0;i<len;i+=8)
+    {
+		for(j=0;j<=7;j++)
+		{
+            k = in[i+j] - '0';
+			if(i+j<len)
+			{
+				out[i/8] |= (k<<(7-j));
+			}
+			else
+			{
+				break;
+			}
+		}
+        // printf(" -- out[%d] = %d\n", i/8, out[i/8]);
+    }
+}
+
+void cnvtstr(unsigned char *in, char *out, int len)
+{
+    int i, j;
+    unsigned char x;
+    for(i=0; i<len; ++i)
+    {
+        x = in[i];
+        // printf("x = %d\n", x);
+        for(j=0; j<8; ++j)
+        {
+            // printf("x&(1<<(7-j)) = %d\n", x&(1<<(7-j)));
+            if(x&(1<<(7-j)))
+                out[(i<<3)+j] = '1';
+            else
+                out[(i<<3)+j] = '0';
+        }
+        // printf("out = %s\n", out);
+        // break;
+    }
+}
+
+int findIDX(pHuffmanTree HT, int character)
+{
+    int n = HT[0].weight;
+    int i = 0;
+    for(i=1; i<=n; ++i)
+    {
+        if(HT[i].character == character)
+            return i;
+    }
+    return -1;
+}
+
+int isAllZero(char *s)
+{
+    int n = strlen(s);
+    for(int i=0; i<n; ++i)
+        if(s[i] != '0')   
+            return 0;
+    return 1;
+}
+
 void decodeFile(pHuffmanTree HT, pHuffmanCode HC)
 {
-    char *codefile = "stdio.code.bcd";
-    FILE *fpcode = fopen(codefile, "r");
+    char *codefile = "stdio.code.bit";
+    FILE *fpcode = fopen(codefile, "rb");
     if(!fpcode) return;
 
-    char *file = "./stdio.decode.bcd.log";
-    FILE *fp = fopen(file, "w");
+    char *file = "./stdio.decode.bit.log";
+    FILE *fp = fopen(file, "wb");
     if(!fp) return;
 
-    char *decodeLine;
-    int i = 0, n = 0, k = 0;
+    unsigned char decodeLine[1024+1];
+    char bitstr[8192];
+    int i = 0, k = 0, len = 0;
     int idx = 0;
+    char remain[16] = {0};
+    unsigned char line[1024+1];
 
-    unsigned char *line;
-    unsigned char lenLine[2+1] = {0};
-    char *hexstr, *binstr;
-    while(1)
+    memset(line, 0, sizeof(line));
+    while(fread(line, sizeof(unsigned char), 2, fpcode) > 0)
     {
-        memset(lenLine, 0, sizeof(lenLine));
-        if(2 == fread(lenLine, sizeof(unsigned char), 2, fpcode))
+        len = line[0] << 8;
+        len += line[1];
+        // printf("len = %d\n", len);
+        memset(line, 0, sizeof(line));
+        fread(line, sizeof(unsigned char), len, fpcode);
+        // if(len == 1)    printf("line = [%s]\n", line);
+        memset(bitstr, 0, sizeof(bitstr));
+        i = strlen(remain);
+        // if(i>0) printf("------------ remain = %s\n", remain);
+        strcpy(bitstr, remain);
+        memset(remain, 0, sizeof(remain));
+        cnvtstr(line, bitstr+i, len);
+        // printf("------------- bitstr = %s\n", bitstr);
+        // break;
+        memset(decodeLine, 0, sizeof(decodeLine));
+        i = 0;  k = 0;
+        while(i<strlen(bitstr))
         {
-            n = lenLine[0] << 4;
-            n += lenLine[1];
-            
-            line = (unsigned char *)calloc(n+2+1, sizeof(unsigned char));
-            memcpy(line, lenLine, 2);
-            if(n == fread(line+2, sizeof(unsigned char), n, fpcode))
+            idx = metchHC(HC, bitstr+i);
+            if(idx == -1)   
             {
-                // memset(decodeLine, 0, sizeof(decodeLine));
-                hexstr = bcd2hexstr(line);
-                // printf("hexstr = %s\n", hexstr);
-                binstr = hexstr2bin(hexstr);
-                i = 0;  k = 0, n = strlen(binstr);
-                
-                decodeLine = (char *)calloc(n+1, sizeof(char));
-                while(i<n)
-                {
-                    idx = metchHC(HC, binstr+i);
-                    if(idx == -1)   
-                    {
-                        printf("decode error.\n");
-                        return ;
-                    }
-                    decodeLine[k++] = idx;
-                    i += strlen(HC[idx]);
-                }
-
-                fwrite(decodeLine, 1, strlen(decodeLine), fp);
-                free(line); line = NULL;
-                free(decodeLine);   decodeLine = NULL;
-                free(hexstr);   hexstr = NULL;
-                free(binstr);   binstr = NULL;
+                strcpy(remain, bitstr+i);
+                // printf("remain = %s\n", remain);
+                // printf("decode break.\n");
+                break ;
             }
+            if(len == 1 && isAllZero(bitstr+i))    break;
+            decodeLine[k++] = HT[idx].character;
+            i += strlen(HC[idx]);
         }
-        else
-        {
-            break;
-        }
-    }
-    #if 0
-    while(1)
-    {
-        line = (unsigned char *)calloc(2, sizeof(unsigned char));
-        if(2 == fread(line, sizeof(unsigned char), 2, fpcode))
-        {
-            n = line[0] << 8;
-            n += line[1];
-            
-            free(line);
-            line = (unsigned char *)calloc(n+1, sizeof(unsigned char));
-            if(n == fread(line, 1, n, fpcode))
-            {
-                memset(decodeLine, 0, sizeof(decodeLine));
-                i = 0;  k = 0;
-                while(i<n-1)
-                {
-                    idx = metchHC(HC, (char *)line+i);
-                    if(idx == -1)   
-                    {
-                        printf("decode error.\n");
-                        return ;
-                    }
-                    decodeLine[k++] = idx;
-                    i += strlen(HC[idx]);
-                }
+        // printf("decodeLine = [%s]\n", decodeLine);
 
-                fwrite(decodeLine, 1, strlen(decodeLine), fp);
-                free(line);
-                line = NULL;
-            }
-        }
-        else
-        {
-            break;
-        }
+        fwrite(decodeLine, 1, k, fp);
+        memset(line, 0, sizeof(line));
     }
-    #endif
 
     fclose(fp);
     fclose(fpcode);
 }
 
+
+
+
+void codeFile(pHuffmanTree HT, pHuffmanCode HC)
+{
+    char *file = "./test_bst";
+    char *codefile = "stdio.code.bit";
+    FILE *fp = fopen(file, "rb");
+    if(!fp) return;
+    FILE *fpcode = fopen(codefile, "wb");
+    if(!fpcode) return;
+    unsigned char line[1024+1] = {0};
+    // unsigned char codeLine[4096] = {0};
+    char codeLine[8192] = {0};
+    char remain[8] = {0};
+    unsigned char codeBit[1024] = {0};
+    unsigned char uclen[2] = {0};
+    int i = 0, n = 0;
+    int idx = 0, start = 0, len = 0;
+    while((n = fread(line, 1, 1024, fp)))
+    {
+        memset(codeLine, 0, sizeof(codeLine));
+        strcpy(codeLine, remain);
+        start = strlen(remain);
+        for(i=0; i<n; ++i)
+        {
+            // printf("line[%d] = %d\n", i, line[i]);
+            idx = findIDX(HT, line[i]);
+            if(idx < 1) return ;
+            // printf("idx = %d, HC[idx] = %s\n", idx, HC[idx]);
+            strcpy((char *)codeLine+start, HC[idx]);
+            start += strlen(HC[idx]);
+        }
+
+        memset(remain, 0, sizeof(remain));
+        len = (strlen(codeLine) >> 3) << 3;
+        strcpy(remain, codeLine+(len));
+        codeLine[len] = 0;
+
+        // printf("codeLine = [%s]\n", codeLine);
+        memset(codeBit, 0, sizeof(codeBit));
+
+        cnvtbit(codeLine, codeBit, strlen(codeLine));
+        len = (strlen(codeLine)+7)>>3;
+        // printf("len = %d\n", len);
+        uclen[0] = len>>8;
+        uclen[1] = len&0xff;
+        fwrite(uclen, 1, 2, fpcode);
+        fwrite(codeBit, 1, len, fpcode);
+    }
+
+    if(strlen(remain))
+    {
+        // printf("remain = [%s]\n", remain);
+        memset(codeBit, 0, sizeof(codeBit));
+
+        cnvtbit(remain, codeBit, strlen(remain));
+        len = (strlen(remain)+7)>>3;
+        // printf(" ===== len = %d, codeBit[0] = %d\n", len, codeBit[0]);
+        uclen[0] = len>>8;
+        uclen[1] = len&0xff;
+        fwrite(uclen, 1, 2, fpcode);
+        fwrite(codeBit, 1, len, fpcode);        
+    }
+
+    fclose(fp);
+    fclose(fpcode);
+}
+
+
 void testHuffmanFile()
 {
-    char *file = "./stdio.log";
+    char *file = "./test_bst";
 
-    FILE *fp = fopen(file, "r");
+    FILE *fp = fopen(file, "rb");
     if(!fp) return;
 
-    int weights[128] = {0};
-    char line[1024] = {0};
+    int weights[256] = {0};
+    unsigned char line[1024] = {0};
     int i = 0, n = 0;
     int idx = 0;
-    while(fgets(line, 1024, fp))
+    while((n = fread(line, 1, 1024, fp)))
     {
-        n = strlen(line);
         for(i=0; i<n; ++i)
         {
             idx = line[i];
@@ -308,7 +350,7 @@ void testHuffmanFile()
 
     fclose(fp);
 
-    pHuffmanTree HT = createHuffmanTree(weights, 128);
+    pHuffmanTree HT = createHuffmanTree(weights, 256);
     pHuffmanCode HC = createHufmanCode(HT);
 
     // showHuffman(HT);

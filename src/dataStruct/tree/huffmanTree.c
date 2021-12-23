@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
 #include "huffmanTree.h"
 
 
@@ -12,7 +13,7 @@
  */
 pHuffmanTree initHuffmanTree(int n)
 {
-    pHuffmanTree HT = (pHuffmanTree)calloc(n<<1, sizeof(HTNode));
+    pHuffmanTree HT = (pHuffmanTree)calloc(1+(n<<1), sizeof(HTNode));
     if(!HT)
     {
         perror("callic for pHuffmanTree error.\n");
@@ -32,11 +33,18 @@ pHuffmanTree createHuffmanTree(int *weights, int n)
     pHuffmanTree HT = initHuffmanTree(n);
     if(!HT) return NULL;
 
-    int i = 0;
-    for(i=0; i<n; ++i)      // 初始化n个结点的值，存放在HT中第1个元素之后
+    int i = 0, k=0;
+    for(i=0,k=0; i<n; ++i)      // 初始化n个结点的值，存放在HT中第1个元素之后
     {
-        HT[i+1].weight = weights[i];
+        if(weights[i] > 0)
+        {
+            ++k;
+            HT[k].weight = weights[i];
+            HT[k].character = i;
+        }
     }
+    HT[0].weight = k;   // 重新确定出现字符的个数
+    n = k;
 
     int m = n<<1;
     int *smallNodes = (int *)calloc(2, sizeof(int));
@@ -86,7 +94,7 @@ int *selectTwoSmallest(pHuffmanTree HT, int n)
     int i = 1;
     for(i=1; i<=n; ++i)
     {
-        if(0 == HT[i].parent)
+        if(0 == HT[i].parent ) // &&  HT[i].weight)
         {
             if(0 == first)  // 先把第一个值赋给first
             {
@@ -136,11 +144,11 @@ void showHuffman(pHuffmanTree HT)
 {
     int n = HT[0].weight << 1;
     int i = 1;
-    printf("index weight pathlen parent lchild rchild:\n");
+    printf("index character weight pathlen parent lchild rchild:\n");
     for(i=1; i<n; ++i)
     {
-        printf("%-5d %-5d %-7d %-6d %-6d %-6d\n", 
-        i, HT[i].weight, HT[i].pathlen, HT[i].parent, HT[i].lchild, HT[i].rchild);
+        printf("%-5d [%c]%-9d %-6d %-7d %-6d %-6d %-6d\n", 
+        i, isprint(HT[i].character)?HT[i].character:' ', HT[i].character, HT[i].weight, HT[i].pathlen, HT[i].parent, HT[i].lchild, HT[i].rchild);
     }
 }
 
