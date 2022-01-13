@@ -18,6 +18,7 @@ successorAvlHandle successorAvlFunc = NULL;
 // outputSortedAvlHandle outputSortedAvlFunc = NULL;
 insertAvlHandle insertAvlFunc = NULL;
 deleteAvlHandle deleteAvlFunc = NULL;
+deleteAvlLeafHandle deleteAvlLeafFunc = NULL;
 freeAvlHandle freeAvlFunc = NULL;
 drawAvlTreeHandle drawAvlTreeFunc = NULL;
 selectAvlHandle selectAvlFunc = NULL;
@@ -118,6 +119,15 @@ int initAvlHandle()
     dlerror();
     deleteAvlFunc = (deleteAvlHandle)dlsym(avlHandle, "deleteAvl");
     if(NULL == deleteAvlFunc)
+    {
+        fprintf( stderr, "[%s](%d) dlsym get error: %s\n", __FILE__, __LINE__, dlerror() );
+        return EXIT_FAILURE;
+    }
+
+
+    dlerror();
+    deleteAvlLeafFunc = (deleteAvlLeafHandle)dlsym(avlHandle, "deleteAvlLeaf");
+    if(NULL == deleteAvlLeafFunc)
     {
         fprintf( stderr, "[%s](%d) dlsym get error: %s\n", __FILE__, __LINE__, dlerror() );
         return EXIT_FAILURE;

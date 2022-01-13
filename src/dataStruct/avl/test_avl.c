@@ -109,25 +109,30 @@ int main(int argc, char *argv[])
         printf("random index = %d, selectAvl of this index not found\n", rc);
     printf("BalanceTree = %d\n", isBalanceTreeFunc(root));
 
-    lrMirrorFunc(root);
-    drawAvlTree(root, 2);
-    printf("After lrMirror, BalanceTree = %d\n", isBalanceTreeFunc(root));
+    // lrMirrorFunc(root);
+    // drawAvlTree(root, 2);
+    // printf("After lrMirror, BalanceTree = %d\n", isBalanceTreeFunc(root));
 
-    // printf("Input a num to delete: ");
-    // scanf("%d", &find->key);
-    // rc = deleteAvlFunc(&root, find);
-    // if(0 == rc)
-    // {
-    //     printf("after delete root is %d[%p]\n", root->data->key, root);
-    //     printf("delete %d success\n", find->key);
-    //     LogDebugHex((unsigned char *)root, sizeof(avlNode)*numElem-1, "root");
-    //     drawAvlTreeFunc(root, 12);
-    // }
-    // else
-    // {
-    //     printf("To be delete element %d is not found\n", find->key);
-    // }
-
+while(1)
+{
+    printf("Input a num to delete(-1 to quit): ");
+    scanf("%d", &find->key);
+    if(find->key == -1)    break;
+    // root = deleteAvlLeafFunc(root, find, 0, NULL);
+    rc = deleteAvl(&root, find);
+    if(0 == rc)
+    {
+        updateLevelInfo(root, 1, 0);
+        // printf("after delete root is %d[%p]\n", root->data->key, root);
+        // printf("delete %d success\n", find->key);
+        LogDebugHex((unsigned char *)root, sizeof(avlNode)*numElem-1, "root");
+        drawAvlTreeFunc(root, 2);
+    }
+    else
+    {
+        printf("To be delete element %d is not found\n", find->key);
+    }
+}
     freeAvl(&root);
 
     closeAvlHandle();

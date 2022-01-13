@@ -1,0 +1,29 @@
+CC=gcc
+CFLAGS += -Wall -std=gnu99
+LDFLAGS += -llist_cursor #-llist_link
+
+LDDIR += -L /mnt/e/lg/vscode/lib
+TAGNAME = test_list_cursor
+TARGET = ../bin/$(TAGNAME)
+
+SRCS =  \
+		test_list_cursor.c 		\
+		# test_list_link.c 		\
+
+
+INC = -I ../inc 
+
+OBJS = $(SRCS:.c=.o)
+
+
+$(TARGET):$(OBJS)
+	$(CC) $(LDDIR) -o $@ $^ $(LDFLAGS) 
+
+.PHONY: clean cleanall
+cleanall:
+	rm -f $(TARGET) $(OBJS) 
+clean:
+	rm -f $(OBJS) 
+
+%.o:%.c
+	$(CC) $(CFLAGS) $(INC) -o $@ -c $< 

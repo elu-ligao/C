@@ -1,0 +1,5 @@
+randomChange    生成前N个自然数的一个随机置换
+gcd             最大公因数(欧几里得算法)
+qPow            快速幂
+subSequence     子序列问题
+prime           素数

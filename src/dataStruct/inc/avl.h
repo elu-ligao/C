@@ -60,6 +60,7 @@ pavlTree insertAvl(pavlTree root, pavlElement e, int rlFlag, pavlTree p);
 
 // 删除
 int deleteAvl(pavlTree *T, pavlElement e);
+pavlTree deleteAvlLeaf(pavlTree root, pavlElement e, int rlFlag, pavlTree p);
 
 // 按索引查找
 pavlTree selectAvl(pavlTree T, int index);

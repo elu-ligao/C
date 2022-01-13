@@ -34,7 +34,7 @@ pLink *randArray(int n)
         datas[i] = (pLink)calloc(1, sizeof(PNode));
         if(!datas[i])   continue;
         int f = rand()%100 > 49 ? 1 : -1; 
-        datas[i]->expn = rand()%5 * f;        
+        datas[i]->expn = rand()%n * f;        
         datas[i]->coef = f * rand()%10000 / 100.0;
     }
     return datas;
@@ -324,6 +324,47 @@ pLink polynamialMul(pLink A, pLink B)
 }
 
 
+pLink *testArrayA(int n)
+{
+    int i = 0;
+    pLink *datas = (pLink *)calloc(n, sizeof(pLink));
+    if(NULL == datas)   
+    {
+        perror("calloc for datas error\n");
+        return NULL;
+    }
+    int expn[] = {-5, 1, -17, 16, -17, 1, -20, 18, -12, -5, -14, -1, 19, -11, 3, -10, 10, 18, 1, 15};
+    float coef[] = {-13.330,16.770, 13.810, -15.510, 9.680, 18.590, 6.100, 7.050, -15.670, -6.040, 2.870, -14.920, -0.500, 16.900, -12.200, -7.150, -3.860, -0.530, -10.610, 14.990};
+    for(i=0; i<n; ++i)
+    {
+        datas[i] = (pLink)calloc(1, sizeof(PNode));
+        if(!datas[i])   continue;
+        datas[i]->expn = expn[i];        
+        datas[i]->coef = coef[i];
+    }
+    return datas;
+}
+pLink *testArrayB(int n)
+{
+    int i = 0;
+    pLink *datas = (pLink *)calloc(n, sizeof(pLink));
+    if(NULL == datas)   
+    {
+        perror("calloc for datas error\n");
+        return NULL;
+    }
+    int expn[] = {-14,-15,-15,0,17,20,5,19,-12,-16,6,-5,14,-3,-17,-6,-16,0,1,-17};
+    float coef[] = {6.200,3.400,15.430,9.850,17.530,5.430,-18.070,6.120,-10.460,3.590,-17.940,-18.160,11.570,-11.250,14.780,8.650,-3.600,9.820,8.710,18.070};
+    for(i=0; i<n; ++i)
+    {
+        datas[i] = (pLink)calloc(1, sizeof(PNode));
+        if(!datas[i])   continue;
+        datas[i]->expn = expn[i];        
+        datas[i]->coef = coef[i];
+    }
+    return datas;
+}
+
 /*
  *  Usage: mergeList numA numB [seed]
  *  num:    元素个数
@@ -348,14 +389,14 @@ int main(int argc, char *argv[])
     int numA = atoi(argv[1]);
     int numB = atoi(argv[2]);
 
-    pLink *datasA = randArray(numA);
+    pLink *datasA = randArray(numA);    // testArrayA(numA); //
     if(!*datasA)
     {
         printf("rand datasA error\n");
         return -11;
     }
 
-    pLink *datasB = randArray(numB);
+    pLink *datasB = randArray(numB);    // testArrayB(numA); //
     if(!*datasB)
     {
         printf("rand datasB error\n");
@@ -368,7 +409,7 @@ int main(int argc, char *argv[])
         perror("createPolynamial A error.\n");
         return -21;
     }
-    traverseList(A, "A");
+    // traverseList(A, "A");
 
     pLink B = createPolynamial(datasB, numB);
     if(!B)  
@@ -376,26 +417,26 @@ int main(int argc, char *argv[])
         perror("createPolynamial B error.\n");
         return -22;
     }
-    traverseList(B, "B");
+    // traverseList(B, "B");
 
     pLink polyAdd = polynamialAdd(A, B);
-    traverseList(polyAdd, "polyAdd");
+    // traverseList(polyAdd, "polyAdd");
 
     pLink polySub = polynamialSub(A, B);
-    traverseList(polySub, "polySub");
+    // traverseList(polySub, "polySub");
 
     // polyAdd = polynamialAdd(A, B);       // check B is not modified
     // traverseList(polyAdd, "polyAdd");
 
     pLink polyMul = polynamialMul(A, B);
     traverseList(polyMul, "polyMul");
-
+    // printf("%s total elements: %d\n", "polyMul", polyMul->expn);
 
     freeLink(&A);
     freeLink(&B);
     freeLink(&polyAdd);
     freeLink(&polySub);
-    freeLink(&polySub);
+    freeLink(&polyMul);
 
     return 0;
 }

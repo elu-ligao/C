@@ -1,3 +1,10 @@
+/*
+ * @Author       : elu
+ * @Date         : 2021-11-17 10:13:04
+ * @LastEditTime : 2021-12-26 16:51:08
+ * @LastEditors  : Please set LastEditors
+ * @Description  : 
+ */
 #ifndef _AVL_DYNAMIC_H
 #define _AVL_DYNAMIC_H
 
@@ -24,8 +31,10 @@ typedef pavlTree (*maxAvlHandle)(pavlTree T);            // 返回最大键值�
 typedef pavlTree (*predecessorAvlHandle)(pavlTree T, pavlElement key);     // 返回键值仅次于(更小)给定键的对象
 typedef pavlTree (*successorAvlHandle)(pavlTree T, pavlElement key);       // 返回键值仅大于(更大)给定键的对象
 // typedef void (*outputSortedAvlHandle)(pavlTree T, int *index, int rlFlag, int prtFlag);   // 中序遍历(调用前index的值务必设为0)
-typedef pavlTree (*insertAvlHandle)(pavlTree *root, pavlElement e, int rlFlag, pavlTree p);   // 插入
+typedef pavlTree (*insertAvlHandle)(pavlTree root, pavlElement e, int rlFlag, pavlTree p);   // 插入
 typedef int (*deleteAvlHandle)(pavlTree *T, pavlElement e);   // 删除
+typedef pavlTree (*deleteAvlLeafHandle)(pavlTree T, pavlElement e, int rlFlag, pavlTree p);   // 删除
+
 typedef void (*freeAvlHandle)(pavlTree *T);                   // 释放
 typedef void (*drawAvlTreeHandle)(pavlTree T, int prtFlag);                 // 以树的形式打印avl
 typedef pavlTree (*selectAvlHandle)(pavlTree T, int index);     // 根据索引返回元素值
@@ -48,6 +57,7 @@ extern successorAvlHandle successorAvlFunc;
 // extern outputSortedAvlHandle outputSortedAvlFunc;
 extern insertAvlHandle insertAvlFunc;
 extern deleteAvlHandle deleteAvlFunc;
+extern deleteAvlLeafHandle deleteAvlLeafFunc;
 extern freeAvlHandle freeAvlFunc;
 extern drawAvlTreeHandle drawAvlTreeFunc;
 extern selectAvlHandle selectAvlFunc;

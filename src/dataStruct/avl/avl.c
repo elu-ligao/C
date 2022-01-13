@@ -684,6 +684,12 @@ pavlTree insertAvl(pavlTree S, pavlElement e, int rlFlag, pavlTree p)
     return S;
 }
 
+// 将src 的关键字更新为 dst的关键字
+void updateAvlElemInfo(pavlTree src, pavlTree dst)
+{
+    src->data->key = dst->data->key;
+}
+
 /*
  *  void deleteAvl(pavlTree *T, pavlElement e)
  *  desc:   删除数据域
@@ -702,7 +708,7 @@ int deleteAvl(pavlTree *T, pavlElement e)
     if(NULL == S)
         return -1;
     // printf("find the deleted element %d[%p], father is %d[%p]\n", S->data->key, S, S->parent ? S->parent->data->key : -1, S->parent);
-
+#if 0
     if(NULL == S->lchild && NULL == S->rchild)  // S is leaf node
     {
         // delete S
@@ -717,6 +723,7 @@ int deleteAvl(pavlTree *T, pavlElement e)
                 S->parent->rchild = NULL;
             }
         }
+        // *S = deleteAvlLeafFunc(*S, e, 0, NULL);
     }   // end S is leaf node
     else if(S->lchild && S->rchild)     //  S have two children node
     {
@@ -797,19 +804,120 @@ int deleteAvl(pavlTree *T, pavlElement e)
         else
             TT = Schild;
     }   
-    // free S
-    free(S->data);
-    S->data = NULL;
-    S->lchild = NULL;
-    S->rchild = NULL;
-    S->parent = NULL;
-    free(S);
-    S = NULL;
+#endif
+    // 找到替换S位置的结点 predecessor
+    printf("S is %d\n", S->data->key);
+    pavlTree predecessor = maxAvl(S->lchild);
+    // 删除 predecessor
+    if(!predecessor)    predecessor = S;
+    // printf("predecessor is %d\n", predecessor->data->key);
+    *T = deleteAvlLeaf(*T, predecessor->data, 0, NULL);
+    // 将 predecessor的关键信息域替换待删结点e的关键信息域
+    updateAvlElemInfo(S, predecessor);
+    // free predecessor
+    free(predecessor->data);
+    predecessor->data = NULL;
+    predecessor->lchild = NULL;
+    predecessor->rchild = NULL;
+    predecessor->parent = NULL;
+    free(predecessor);
+    predecessor = NULL;
 
     *T = TT;
     updateLevelInfo(*T, 1, 0);
     return 0;
 }
+
+
+
+
+/**
+ * @descripttion:   删除平衡二叉树结点：
+ *                  1. 找到待删除结点S
+ *                  2. 定位S的predecessor，即S左子树最大的结点predecessor(最右下角，即肯定没有右子树的结点)
+ *                  3. 删除predecessor
+ *                      3.1 predcessor 无左子树，说明predecessor 是叶子结点，直接删除
+ *                      3.2 predcessor 有左子树，将其左子树结点替代predecessor 结点位置
+ *                  4. 更新height和bf信息
+ *                  5. 根据bf失衡信息做调整：
+ *                      5.1 如果待删除的结点(这里是predecessor结点)是其父节点的左结点，删除之后只有可能左子树高度减小
+ *                          即产生失衡时只有可能是右子树高度等于2，这时判断右子树的bf：
+ *                              如果右子树bf==-1，说明是右子树的右子树过高，做RR调整
+ *                              如果右子树bf==0，说明右子树的左右子树高度相等，此时可以做RR调整或RL调整
+ *                              如果右子树bf==1，说明右子树的左子树高度过高，应做RL调整
+ *                      5.2 类似操作
+ *                  6. 将predecessor 的信息域替换掉待删结点e的信息域
+ * @return {*}
+ * @param {pavlTree} S
+ * @param {pavlElement} e
+ * @param {int} rlFlag
+ * @param {pavlTree} p
+ */
+pavlTree deleteAvlLeaf(pavlTree S, pavlElement e, int rlFlag, pavlTree p)
+{
+    if(NULL == S)
+    {
+        return NULL;
+    }
+    // printf("S.data.key = %d, e.key = %d, rlFlag = %d, S.parent.data = %d\n",
+    //     S?S->data->key:-1, e->key, rlFlag, p?p->data->key:-1);
+    if(S->data->key == e->key)  // 删除结点
+    {
+        if(!S->lchild)  // 没有左子树
+        {
+            return NULL;
+        }
+        // 有左子树，将左子树根结点取代待删除的S结点位置
+        S->lchild->parent = p;
+        if(p && rlFlag == 1)
+        {
+            p->lchild = S->lchild;  
+            S = p->lchild;
+        }
+        else if(p && rlFlag == 2)
+        {
+            p->rchild = S->lchild;
+            S = p->rchild;
+        }
+        
+    }
+    else if(S->data->key > e->key)
+    {
+        
+        S->lchild = deleteAvlLeaf(S->lchild, e, 1, S);     // delete on the left child， 只可能左边高度减少 
+        if(Height(S->rchild) - Height(S->lchild) == 2)
+        {
+            
+            if(S->rchild->data->otherInfo.balanceFactor == -1)  // RR
+                S = adjustRR(S);
+            else if(S->rchild->data->otherInfo.balanceFactor == 0)  // RR or RL
+                S = adjustRR(S);
+            else if(S->rchild->data->otherInfo.balanceFactor == 1)   // RL
+                S = adjustRL(S);
+        }
+    }
+    else if(S->data->key < e->key)
+    {
+        
+        S->rchild = deleteAvlLeaf(S->rchild, e, 2, S);
+        if(Height(S->lchild) - Height(S->rchild) == 2)
+        {
+            if(S->lchild->data->otherInfo.balanceFactor == 1)  // LL
+                S = adjustLL(S);
+            else if(S->lchild->data->otherInfo.balanceFactor == 0)  // LL or LR
+                S = adjustLL(S);
+            else if(S->lchild->data->otherInfo.balanceFactor == -1)   // LR
+                S = adjustLR(S);
+        }
+    }
+
+    S->data->otherInfo.height = Max(Height(S->lchild), Height(S->rchild)) + 1;
+    S->data->otherInfo.balanceFactor = Height(S->lchild) - Height(S->rchild);
+
+    return S;
+}
+
+
 
 /*
  *  void freeAvl(pavlTree *T)
