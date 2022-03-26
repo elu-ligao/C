@@ -116,7 +116,12 @@
     "stack_link.h": "c",
     "stdio.h": "c",
     "polynamial.h": "c",
-    "list.h": "c"
+    "list.h": "c",
+    "stack.h": "c",
+    "graphics.h": "c",
+    "easyx.h": "c",
+    "btree.h": "c",
+    "edge.h": "c"
   },
   "C_Cpp.errorSquiggles": "Enabled",
  
